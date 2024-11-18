@@ -6,7 +6,7 @@ dump -> Escrever dados no formato json em um arquivo
 
 from os.path import dirname, realpath, isfile 
 
-from json import dump
+from json import dump, load
 
 
 class JsonManager:
@@ -15,6 +15,7 @@ class JsonManager:
         ''' Inicializa o caminho base do diretorio onde o script esta sendo executado e armazena em self.path.
         '''
         self.path = dirname(realpath(__file__)) + '/' 
+
 
     def create_json(self, file):
         ''' Metodo responsavel por:
@@ -47,7 +48,29 @@ class JsonManager:
             ''' Se já existir, não cria o arquivo'''
             return False
 
+
+    def read_json(self, file):
+        ''' Metodo responsavel por:
+        --> Ler um arquivo Json.
+        --> Verifica se arquivo existe.
+        '''
+        if isfile(self.path + file):
+            '''
+                O metodo o open() abre o arquivo leitura. Por padrão, ele abre em modo leitura não é necessario para "r" no segundo parametro.
+                "data" -> Recebe o conteudo do arquivo carregado pela função "load(f)", que le o arquivo na qual foi declarada como "f", e converte o conteudo JSON do arquivo para um objeto Python. 
+            '''
+            with open(self.path + file) as f:
+                data = load(f)
+            return data
+        else:
+            return False
+
+
+'''
 if __name__ == '__main__':
     jmanager = JsonManager()
-    jmanager.create_json('data/data.json') # Caminho onde arquivo json vai ser criado
-    
+    # jmanager.create_json('data/data.json') # Caminho onde arquivo json vai ser criado
+    print(jmanager.read_json('data/data.json')) # Retorna todas as chaves e valores
+    print(jmanager.read_json('data/data.json')['username']) # Retorna a chave e o valor da chave especifico.
+    print(jmanager.read_json('data/data.json')['password'])
+'''
