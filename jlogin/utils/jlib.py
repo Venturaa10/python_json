@@ -40,5 +40,13 @@ class JsonManager:
 
 
     def update_json(self, filepath, data):
+        ''' Metodo responsavel por:
+        --> Atualizar as informações de um arquivo JSON.
+        Parametros: 
+        --> "filepath" -> Recebe o caminho do arquivo JSON que será atualizado.
+        --> "data" -> Recebe o objeto contendo os dados que serão escritos no arquivo JSON.
+
+        --> Este metodo sobrescreve o conteúdo do arquivo com os dados fornecidos.
+        '''
         with open(filepath, "w") as f: 
             dump(data, f, indent=2, separators=(',', ': '))

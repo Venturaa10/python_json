@@ -5,6 +5,8 @@ run -> pip install passlib
  '''
 from getpass import getpass
 from passlib.hash import pbkdf2_sha256
+from textwrap import dedent
+
 
 class Jlogin(JsonManager):
     def __init__(self):
@@ -22,7 +24,7 @@ class Jlogin(JsonManager):
         # data = JsonManager().read_json(self.path_data)
         print('### Sing In ###')
         username = input('Enter your username: ')
-        # Solicitar senha invisivel durante a digitação
+        # Solicitar senha oculta durante a digitação
         password = getpass('Enter your password: ') 
         password_verify = getpass('Repeat your password: ')
 
@@ -33,6 +35,57 @@ class Jlogin(JsonManager):
         # Criar um arquivo JSON com o username e hash da senha
         JsonManager().create_json(self.path_data, username, pbkdf2_sha256.hash(password_verify)) 
         print(f'Username Created: {username}')
+
+
+    def home(self, data):
+        print(dedent('''
+        Menu:
+              
+        1 - Alterar Login.
+        2 - Sair
+              
+        Escolha uma opção
+        '''))
+        opc = input('> ')    
+    
+        while True:
+            if opc == '1':
+                self.update_login(data)
+                break
+            elif opc == '2':
+                break
+            else:
+                print('Option Invalid!')
+
+
+    def update_login(self, data):
+        ''' Responsavel por atualizar as informações do usuario:
+        --> Recebe o dicionário "data", que contém as informações atuais do usuário. 
+        --> Recebe um novo nome de usuario.
+        --> Recebe a senha antiga e verifica se a senha antiga coincide com o hash armazenada.
+        --> Recebe uma nova senha e a confirmação dessa nova senha, se as senhas forem iguais, a nova senha é salva como hash, sendo assim salva de forma segura no JSON.
+        --> Atualiza os dados no arquivo Json chamando o metodo "update_json".
+        '''
+        
+        print('### Update Login ###')
+        username = input('Enter new your username: ')
+        password_old = getpass('Enter your old password: ')
+
+        while not pbkdf2_sha256.verify(password_old, data['password']):
+            password_old = getpass('Enter your old password: ')
+
+        password_new = getpass('Enter your new password: ')
+        password_new_repeat = getpass('Repeat your new password: ')
+
+        while password_new != password_new_repeat:
+            print('New password do not match.')
+            password_new_repeat = getpass('Repeat your new password: ')
+
+        data['username'] = username
+        data['password'] = pbkdf2_sha256.hash(password_new_repeat)
+
+        JsonManager().update_json(self.path_data, data)
+        print('Update Success!')
 
 
     def logging_in(self, data):
@@ -57,12 +110,15 @@ class Jlogin(JsonManager):
 
         else: 
             print('Login Success!')
+            self.home(data)
+
 
     def main(self):
         data = JsonManager().read_json(self.path_data)
         if data: # Se o arquivo for lido corretamente (ou seja, "data" não for vazio), entra na condição para efetuar o login.
             self.logging_in(data)
-
+        else:
+            self.sign_in()
         # self.sign_in()
 
 if __name__ == '__main__':
