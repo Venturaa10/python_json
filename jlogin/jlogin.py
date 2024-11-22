@@ -1,7 +1,7 @@
 from os.path import dirname, realpath, join
 from utils.jlib import JsonManager
 ''' Modulos importados para manipulação e verificação de senhas.
-run -> pip install passlib
+run - pip install passlib
  '''
 from getpass import getpass
 from passlib.hash import pbkdf2_sha256
@@ -16,10 +16,10 @@ class Jlogin(JsonManager):
     def sign_in(self):
         '''
         Metodo responsavel por:
-        -> Solicitar nome de usuario e a senha do usuario.
-        -> "getpass" -> Permite que a senha não esteja visivel durante a digitação.
-        -> Verificar se as senhas digitadas coincidem
-        -> Após validação, é criado um arquivo JSON com o username e o hash da senha (gerar uma senha segura) gerada com "pbkdf2_sha256".
+        - Solicitar nome de usuario e a senha do usuario.
+        - "getpass": Permite que a senha não esteja visivel durante a digitação.
+        - Verificar se as senhas digitadas coincidem
+        - Após validação, é criado um arquivo JSON com o username e o hash da senha (gerar uma senha segura) gerada com "pbkdf2_sha256".
         '''
         # data = JsonManager().read_json(self.path_data)
         print('### Sing In ###')
@@ -38,20 +38,24 @@ class Jlogin(JsonManager):
 
 
     def home(self, data):
-        print(dedent('''
-        Menu:
-              
-        1 - Alterar Login.
-        2 - Sair
-              
-        Escolha uma opção
-        '''))
-        opc = input('> ')    
-    
-        while True:
+        opc = '0'
+
+        while opc != '2':
+            print(dedent('''
+            Menu:
+                
+            1 - Alterar Login.
+            2 - Sair
+                
+            Escolha uma opção
+            '''))
+            opc = input('> ')    
+            
             if opc == '1':
-                self.update_login(data)
-                break
+                try:
+                    self.update_login(data)
+                except KeyboardInterrupt:
+                    print('\nLogin Cancelado!')
             elif opc == '2':
                 break
             else:
@@ -60,11 +64,11 @@ class Jlogin(JsonManager):
 
     def update_login(self, data):
         ''' Responsavel por atualizar as informações do usuario:
-        --> Recebe o dicionário "data", que contém as informações atuais do usuário. 
-        --> Recebe um novo nome de usuario.
-        --> Recebe a senha antiga e verifica se a senha antiga coincide com o hash armazenada.
-        --> Recebe uma nova senha e a confirmação dessa nova senha, se as senhas forem iguais, a nova senha é salva como hash, sendo assim salva de forma segura no JSON.
-        --> Atualiza os dados no arquivo Json chamando o metodo "update_json".
+        - Recebe o dicionário "data", que contém as informações atuais do usuário. 
+        - Recebe um novo nome de usuario.
+        - Recebe a senha antiga e verifica se a senha antiga coincide com o hash armazenada.
+        - Recebe uma nova senha e a confirmação dessa nova senha, se as senhas forem iguais, a nova senha é salva como hash, sendo assim salva de forma segura no JSON.
+        - Atualiza os dados no arquivo Json chamando o metodo "update_json".
         '''
         
         print('### Update Login ###')
@@ -90,12 +94,12 @@ class Jlogin(JsonManager):
 
     def logging_in(self, data):
         ''' Metodo responsavel por:
-        -> Solicitar nome de usuario e verificar se corresponde ao esperado no dicionario "data".
-        -> Solicitar a senha e fazer a comparação com o hash armazenado utilizando o metodo "verify"
-        -> "verify" parametros:
+        - Solicitar nome de usuario e verificar se corresponde ao esperado no dicionario "data".
+        - Solicitar a senha e fazer a comparação com o hash armazenado utilizando o metodo "verify"
+        - "verify" parametros:
         1º: Senha fornecida pelo usuario (em texto simples).
         2º: O hash armazenado associado a senha original.
-        -> Se as senhas não coincidirem, informa senha invalida. Se não, login efetuado com sucesso.
+        - Se as senhas não coincidirem, informa senha invalida. Se não, login efetuado com sucesso.
         '''
         print('### Loggin In ###')
         username = input('Enter your username: ')
@@ -116,9 +120,15 @@ class Jlogin(JsonManager):
     def main(self):
         data = JsonManager().read_json(self.path_data)
         if data: # Se o arquivo for lido corretamente (ou seja, "data" não for vazio), entra na condição para efetuar o login.
-            self.logging_in(data)
+            try:
+                self.logging_in(data)
+            except KeyboardInterrupt:
+                print('\nLogin Cancelado!')
         else:
-            self.sign_in()
+            try:
+                self.sign_in()
+            except KeyboardInterrupt:
+                print('\nLogin Cancelado!')
         # self.sign_in()
 
 if __name__ == '__main__':

@@ -10,10 +10,25 @@ from json import dump, load
 class JsonManager:
 
     def create_json(self, filepath, *args): # args -> Permite passar nº argumentos
-        ''' Metodo responsavel por:
-        -> Receber o nome do arquivo como argumento.
-        -> Define um dicionario chamado "data" contendo duas chaves.
         '''
+        Cria um objeto Json.
+        Argumentos: 
+        - "filepath" -> Caminho do arquvio JSON.
+        - "args" -> Permite receber mais argumentos se necessario.
+
+        Variaveis:
+        - "data" -> Define um dicionario contendo as chaves.
+
+        Condição if "args":
+        - Verifica se há argumetos passados como parametro.
+        - if True, passa os argumentos como valores das chaves.
+
+        with open(): 
+        - Abre o arquivo no caminho "filepath" e o "w" indica que é para escrever(criar).
+        - Referencia o arquivo escrito como "f".
+        - "dump" -> Converte o objeto "data" para um string Json.
+        '''
+
         data = {"username": "", "password": ""} # As chaves do dicionario
         if args:
             data = {"username": f"{args[0]}", "password": f"{args[1]}"}
@@ -24,8 +39,8 @@ class JsonManager:
 
     def read_json(self, filepath):
         ''' Metodo responsavel por:
-        --> Ler um arquivo Json.
-        --> Verifica se arquivo existe.
+        - Ler um arquivo Json.
+        - Verifica se arquivo existe.
         '''
         if isfile(filepath):
             '''
@@ -41,10 +56,10 @@ class JsonManager:
 
     def update_json(self, filepath, data):
         ''' Metodo responsavel por:
-        --> Atualizar as informações de um arquivo JSON.
+        - Atualizar as informações de um arquivo JSON.
         Parametros: 
-        --> "filepath" -> Recebe o caminho do arquivo JSON que será atualizado.
-        --> "data" -> Recebe o objeto contendo os dados que serão escritos no arquivo JSON.
+        - "filepath" -> Recebe o caminho do arquivo JSON que será atualizado.
+        - "data" -> Recebe o objeto contendo os dados que serão escritos no arquivo JSON.
 
         --> Este metodo sobrescreve o conteúdo do arquivo com os dados fornecidos.
         '''
